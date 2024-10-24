@@ -1,0 +1,5 @@
+shell
+mkdir feedback-analyzer
+cd feedback-analyzer
+npm init -y
+npm install express mongoose axios
