@@ -1,0 +1,37 @@
+import React, { useState } from 'react';
+import { SafeAreaView, TextInput, Button, FlatList, Text, View } from 'react-native';
+import axios from 'axios';
+
+const App = () => {
+    const [comment, setComment] = useState('');
+    const [feedbacks, setFeedbacks] = useState([]);
+
+    const submitFeedback = async () => {
+        const response = await axios.post('http://localhost:3000/feedback', { comment });
+        setFeedbacks([...feedbacks, response.data]);
+        setComment('');
+    };
+
+    return (
+        <SafeAreaView>
+            <TextInput
+                placeholder="Enter your feedback"
+                value={comment}
+                onChangeText={setComment}
+            />
+            <Button title="Submit" onPress={submitFeedback} />
+            <FlatList
+                data={feedbacks}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => (
+                    <View>
+                        <Text>{item.comment}</Text>
+                        <Text>{item.sentiment}</Text>
+                    </View>
+                )}
+            />
+        </SafeAreaView>
+    );
+};
+
+export default App;
