@@ -1,0 +1,40 @@
+const express = require('express');
+const mongoose = require('mongoose');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+mongoose.connect('mongodb://localhost:27017/feedback-analyzer', { useNewUrlParser: true, useUnifiedTopology: true });
+
+const feedbackSchema = new mongoose.Schema({
+    comment: String,
+    sentiment: String,
+    date: { type: Date, default: Date.now },
+});
+
+const Feedback = mongoose.model('Feedback', feedbackSchema);
+
+app.use(express.json());
+
+app.post('/feedback', async (req, res) => {
+    const { comment } = req.body;
+    const sentiment = await getSentimentAnalysis(comment); // hypothetical function to analyze sentiment
+    const feedback = new Feedback({ comment, sentiment });
+    await feedback.save();
+    res.send(feedback);
+});
+
+app.get('/feedback', async (req, res) => {
+    const feedbacks = await Feedback.find();
+    res.send(feedbacks);
+});
+
+async function getSentimentAnalysis(comment) {
+    // Call an external API to analyze sentiment
+    const response = await axios.post('https://sentiment-analysis-api.com', { comment });
+    return response.data.sentiment;
+}
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
