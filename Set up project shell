@@ -1,0 +1,4 @@
+shell
+npx react-native init FeedbackAnalyzer
+cd FeedbackAnalyzer
+npm install axios
